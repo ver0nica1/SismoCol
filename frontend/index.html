@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SismoCol</title>
+  <meta name="description" content="Dashboard educativo de monitoreo sísmico del terremoto de Colombia del 10 de agosto de 2026. Datos verificados del Servicio Geológico Colombiano e información periodística trazable.">
+
+  <!-- Google Fonts: Archivo, Instrument Serif, Geist Mono, Inter (ArtCraft Stack) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem("sismocol-theme") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", t);
+      } catch(e) {}
+    })();
+  </script>
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Custom Stylesheet (ArtCraft Architecture) -->
+  <link rel="stylesheet" href="style.css?v=artcraft_2">
+</head>
+<body>
+
+  <!-- Navigation Tabs Bar -->
+  <nav class="nav-tabs-bar">
+    <div class="nav-container">
+      <!-- Lado Izquierdo: Logo -->
+      <div class="nav-brand">
+        <!-- Brand Logo & System Label -->
+        <div class="brand-wrapper">
+          <div class="brand-icon" title="SismoCol · Colombia">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Croquis / Silueta geográfica de Colombia -->
+              <path d="M 9.08 17.05 L 8.57 16.76 L 7.99 16.37 L 7.65 16.56 L 6.63 16.39 L 6.34 15.88 L 6.12 15.9 L 4.92 15.21 L 4.76 14.84 L 5.21 14.75 L 5.15 14.15 L 5.43 13.72 L 6.03 13.64 L 6.53 12.89 L 6.99 12.26 L 6.55 11.98 L 6.77 11.28 L 6.5 10.19 L 6.76 9.88 L 6.57 8.87 L 6.09 8.23 L 6.24 7.65 L 6.63 7.74 L 6.85 7.38 L 6.57 6.68 L 6.72 6.5 L 7.34 6.54 L 8.23 5.71 L 8.72 5.58 L 8.74 5.18 L 8.96 4.17 L 9.64 3.62 L 10.39 3.6 L 10.49 3.35 L 11.43 3.45 L 12.37 2.84 L 12.83 2.58 L 13.41 2.0 L 13.83 2.07 L 14.15 2.39 L 13.91 2.79 L 13.15 2.99 L 12.84 3.59 L 12.38 3.93 L 12.03 4.37 L 11.89 5.23 L 11.56 5.93 L 12.17 6.01 L 12.33 6.56 L 12.59 6.82 L 12.68 7.3 L 12.54 7.74 L 12.58 7.99 L 12.88 8.09 L 13.16 8.51 L 14.7 8.39 L 15.39 8.55 L 16.24 9.57 L 16.72 9.45 L 17.58 9.51 L 18.26 9.37 L 18.68 9.58 L 18.47 10.22 L 18.2 10.62 L 18.11 11.48 L 18.35 12.27 L 18.69 12.63 L 18.73 12.9 L 18.12 13.49 L 18.56 13.76 L 18.87 14.17 L 19.24 15.37 L 19.01 15.51 L 18.78 14.81 L 18.45 14.43 L 18.05 14.84 L 15.72 14.81 L 15.74 15.56 L 16.44 15.69 L 16.4 16.14 L 16.16 16.02 L 15.49 16.22 L 15.48 17.08 L 16.01 17.52 L 16.2 18.2 L 16.17 18.72 L 15.63 22.0 L 15.03 21.36 L 14.68 21.34 L 15.45 20.12 L 14.53 19.56 L 13.82 19.66 L 13.38 19.46 L 12.73 19.77 L 11.84 19.62 L 11.13 18.37 L 10.58 18.06 L 10.2 17.5 L 9.4 16.93 L 9.08 17.05 Z" fill="currentColor" fill-opacity="0.25"></path>
+              <!-- Punto de epicentro sismológico en rojo -->
+              <circle cx="8.8" cy="11.8" r="1.3" fill="#dc2626" stroke="none"></circle>
+              <!-- Onda concéntrica sutil -->
+              <circle cx="8.8" cy="11.8" r="2.8" stroke="#dc2626" stroke-width="0.8" stroke-dasharray="1.2 1.2" opacity="0.85"></circle>
+            </svg>
+          </div>
+          <div class="brand-text-group">
+            <span class="brand-title">SismoCol</span>            
+          </div>
+        </div>
+      </div>
+
+      <!-- Centro: Botones de Navegación -->
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-overview">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Visión General
+        </button>
+
+        <button class="nav-tab" data-tab="tab-catalog">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Catálogo Sísmico
+          <span class="tab-badge" id="badge-events-count">0</span>
+        </button>
+
+        <button class="nav-tab" data-tab="tab-cities" data-mode-only="terremoto_2026">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Impacto Municipal
+          <span class="tab-badge" id="badge-cities-count">0</span>
+        </button>
+
+        <button class="nav-tab" data-tab="tab-news" data-mode-only="terremoto_2026">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v1m2 13a2 2 0 0 1-2-2V7m2 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+          </svg>
+          Noticias & Fuentes
+          <span class="tab-badge" id="badge-news-count">0</span>
+        </button>
+      </div>
+
+      <!-- Lado Derecho: Telemetría y Selector de Tema (ArtCraft Moon/Sun) -->
+      <div class="nav-right">
+        <div class="header-telemetry">
+          <div class="telemetry-timestamp" id="last-update-time" title="Corte de sincronización de la base de datos">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="timestamp-val">Corte: 10/08/2026</span>
+          </div>
+
+          <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" aria-label="Alternar tema claro/oscuro" title="Cambiar tema">
+            <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-wrapper">
+
+    <!-- TAB 1: VISIÓN GENERAL -->
+    <div id="tab-overview" class="tab-content-panel active">
+      
+      <!-- Integrity Notice Banner -->
+      <div class="integrity-banner">
+        <div class="integrity-content">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          <div>
+            El catálogo sísmico proviene del SGC. Las asociaciones con secuencias son estimaciones; consulta la fuente para confirmar cada evento.
+          </div>
+        </div>
+        <div class="integrity-links">
+          <a href="https://www2.sgc.gov.co/Paginas/aplicaciones-sismos.aspx" target="_blank" rel="noopener">Portal SGC ↗</a>
+        </div>
+      </div>
+
+      <!-- Main Earthquake / Seismic Mode Hero Card -->
+      <section class="hero-event-card">
+        <div class="hero-grid">
+          <div class="magnitude-badge-giant" id="hero-badge-wrap">
+            <span class="magnitude-val" id="hero-mag">7.4</span>
+            <span class="magnitude-unit" id="hero-mag-unit">Mw · Magnitud</span>
+          </div>
+
+          <div class="hero-info">
+            <!-- Mode Dropdown Selector Button -->
+            <div class="mode-dropdown-wrap">
+              <button id="btn-mode-selector" class="mode-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" title="Haz clic para alternar entre Terremoto 2026 y Sismos">
+                <span class="mode-trigger-tag">SELECCIONAR VISTA</span>
+                <div class="mode-trigger-current">
+                  <span id="current-mode-label" class="mode-trigger-title">Terremoto 2026</span>
+                  <svg class="dropdown-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </button>
+              
+              <div id="mode-dropdown-menu" class="mode-dropdown-menu" role="menu">
+                <button type="button" class="mode-option active" data-mode="terremoto_2026" role="menuitem">
+                  <div class="mode-opt-badge red">7.4 Mw</div>
+                  <div class="mode-opt-info">
+                    <span class="mode-opt-title">Terremoto 2026</span>
+                    <span class="mode-opt-desc">Sismo principal, candidatos a réplica, impacto municipal y noticias</span>
+                  </div>
+                  <svg class="mode-opt-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+                <button type="button" class="mode-option" data-mode="sismos" role="menuitem">
+                  <div class="mode-opt-badge blue">SGC</div>
+                  <div class="mode-opt-info">
+                    <span class="mode-opt-title">Sismos</span>
+                    <span class="mode-opt-desc">Monitoreo técnico de sismicidad general nacional</span>
+                  </div>
+                  <svg class="mode-opt-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="hero-meta-list" id="hero-meta-list">
+              <div class="hero-meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span><span id="hero-label-datetime">Fecha:</span> <strong id="hero-datetime">2026-08-10 07:34 COT</strong></span>
+              </div>
+              <div class="hero-meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span><span id="hero-label-location">Epicentro:</span> <strong id="hero-location">San José del Palmar, Chocó</strong></span>
+              </div>
+              <div class="hero-meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                <span><span id="hero-label-depth">Profundidad:</span> <strong id="hero-depth">103.4 km (Intermedia)</strong></span>
+              </div>
+              <div class="hero-meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"></circle><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"></path></svg>
+                <span><span id="hero-label-coords">Coordenadas:</span> <strong id="hero-coords">4.991° N, -76.292° W</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button id="btn-focus-epicenter" class="btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="22" y1="12" x2="18" y2="12"></line>
+                <line x1="6" y1="12" x2="2" y2="12"></line>
+                <line x1="12" y1="6" x2="12" y2="2"></line>
+                <line x1="12" y1="22" x2="12" y2="18"></line>
+              </svg>
+              <span id="btn-focus-text">Ubicar Epicentro</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Telemetry Layout: Metrics on Left, Map on Right -->
+      <div class="telemetry-layout">
+        <!-- Left Side: Metric Indicators -->
+        <div class="metrics-sidebar" id="metrics-counters">
+            <!-- Rendered dynamically (profundidad, candidatos a réplica, impacto) -->
+        </div>
+
+        <!-- Right Side: Map Panel -->
+        <section class="panel telemetry-map-column">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+              <h3 id="map-panel-title">Geolocalización Sísmica</h3>
+            </div>
+            <div class="panel-actions">
+              <button id="btn-reset-map" class="btn-secondary" title="Reajustar vista">Centrar Colombia</button>
+            </div>
+          </div>
+
+          <div class="map-container-wrapper">
+            <div id="map"></div>
+          </div>
+
+          <!-- Map Legend Bar (Rendered dynamically based on mode) -->
+          <div class="map-legend-bar" id="map-legend-container">
+            <div class="legend-group" id="map-legend-items">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Evolution Chart Panel Below (Hidden in Sismos mode) -->
+      <section class="panel chart-panel-full" id="panel-evolution-chart">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-blue)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            <h3 id="evolution-chart-title">Evolución de Víctimas por Fecha</h3>
+          </div>
+          <div class="chart-tabs" id="chart-field-tabs">
+            <button class="chart-tab-btn active" data-field="deceased">Fallecidos</button>
+            <button class="chart-tab-btn" data-field="injured">Heridos</button>
+            <button class="chart-tab-btn" data-field="missing">Desaparecidos</button>
+            <button class="chart-tab-btn" data-field="replicas" id="chart-tab-replicas">Candidatos por día</button>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="evolution-chart"></canvas>
+        </div>
+        <p class="brand-subtitle" id="evolution-chart-caption" style="margin-top: 10px;">
+          * Consolidado cronológico trazable por municipio según boletines de autoridades y reportes oficiales.
+        </p>
+      </section>
+    </div>
+
+    <!-- TAB 2: CATÁLOGO SÍSMICO COMPLETO -->
+    <div id="tab-catalog" class="tab-content-panel">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <h3>Catálogo de Eventos Sísmicos Registrados</h3>
+          </div>
+          <div class="panel-actions">
+            <button id="btn-export-csv" class="btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Exportar CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-toolbar">
+          <div class="search-input-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="filter-search" class="search-input" placeholder="Buscar por municipio, departamento o ID...">
+          </div>
+
+          <select id="filter-mag" class="filter-select">
+            <option value="all">Todas las magnitudes</option>
+          <option value="mag-6">≥ 6.0 (Mayor)</option>
+          <option value="mag-45">≥ 4.5 (Moderado / Fuerte)</option>
+          <option value="mag-3">≥ 3.0</option>
+          <option value="mag-sub3">&lt; 3.0 (Micro / Menor)</option>
+          </select>
+
+          <select id="filter-type" class="filter-select">
+            <option value="all">Todos los tipos</option>
+            <option value="MAINSHOCK">Sismo principal</option>
+          </select>
+        </div>
+
+        <!-- Events Table -->
+        <div class="table-responsive">
+          <table class="seismic-table">
+            <thead>
+              <tr>
+                <th>Fecha y Hora (UTC)</th>
+                <th>Magnitud</th>
+                <th>Profundidad</th>
+                <th>Ubicación / Municipio</th>
+                <th>Departamento</th>
+                <th>Tipo</th>
+                <th>Relación con la secuencia</th>
+                <th>Fuente</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="events-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrap">
+          <div id="table-info">Mostrando 0 de 0 sismos</div>
+          <div class="pager-controls" id="table-pager">
+            <!-- Pager buttons rendered via JS -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 3: IMPACTO MUNICIPAL -->
+    <div id="tab-cities" class="tab-content-panel">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-amber)" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1M15 13h1M15 17h1"></path></svg>
+            <h3>Balances Consolidados por Municipio</h3>
+          </div>
+          <p class="brand-subtitle">Cifras oficiales de víctimas e infraestructura según censos de la UNGRD y alcaldías.</p>
+        </div>
+
+        <div class="cities-grid" id="cities-container">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+    </div>
+
+    <!-- TAB 4: NOTICIAS & BOLETINES -->
+    <div id="tab-news" class="tab-content-panel">
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"></path></svg>
+            <h3>Reportes Periodísticos y Boletines Extraídos</h3>
+          </div>
+          <p class="brand-subtitle">Extracción automatizada y respetuosa con trazabilidad y enlace a la fuente original.</p>
+        </div>
+
+        <div class="news-grid" id="news-container">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>
+        <strong>SismoCol</strong><br>
+        Fuentes: Servicio Geológico Colombiano (SGC) · Infobae Colombia · El Colombiano
+      </div>
+      <div>
+        Datos con trazabilidad de fuentes · Magnitud según el valor reportado por el catálogo
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic (Modular ES6 Architecture) -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>

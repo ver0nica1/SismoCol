@@ -1,0 +1,110 @@
+/**
+ * SismoCol · Base Resets, Global Tokens & Animations
+ * ArtCraft Aesthetic System (Warm Stone / Obsidian Blueprint)
+ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+  color-scheme: light dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-smooth), color var(--transition-smooth);
+}
+
+/* Headings inherit Archivo display */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* Editorial accent serif class */
+.editorial-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Technical HUD Monospace Label Utility */
+.hud-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.hud-label .faint {
+  color: var(--faint);
+}
+
+/* Minimalist Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* Map tiles integration for dark/light mode */
+.leaflet-container {
+  background-color: var(--bg-sunken) !important;
+  font-family: var(--font-sans) !important;
+}
+
+[data-theme="dark"] .leaflet-tile-pane {
+  filter: brightness(0.8) invert(1) contrast(1.2) hue-rotate(195deg) saturate(0.3);
+}
+
+[data-theme="light"] .leaflet-tile-pane {
+  filter: contrast(0.96) brightness(1.02) saturate(0.85);
+}
+
+/* Animations */
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.radar-ring {
+  border: 1.5px solid var(--accent-red);
+  background: var(--accent-red-subtle);
+  border-radius: 50%;
+  animation: radar-pulse 2.2s infinite ease-out;
+  pointer-events: none;
+}

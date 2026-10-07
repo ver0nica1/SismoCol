@@ -1,0 +1,10 @@
+/* ==========================================================================
+   SismoCol · Master Stylesheet
+   ArtCraft Aesthetic System (Warm Stone / Charcoal Obsidian Blueprint)
+   ========================================================================== */
+
+@import url('./css/variables.css?v=artcraft_2');
+@import url('./css/base.css?v=artcraft_2');
+@import url('./css/layout.css?v=artcraft_2');
+@import url('./css/components.css?v=artcraft_2');
+@import url('./css/sections.css?v=artcraft_2');

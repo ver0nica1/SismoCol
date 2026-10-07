@@ -1,0 +1,142 @@
+/**
+ * SismoCol · Design Tokens & CSS Variables
+ * ArtCraft Aesthetic Design System (getartcraft.com/apps)
+ * Warm stone (#f2f1ee) / Charcoal Obsidian (#0d0e10), technical grid lines & high-contrast typography
+ */
+
+:root {
+  /* ========================================================================
+     ArtCraft Color System (Light Theme - Warm Stone / Paper Blueprint)
+     ======================================================================== */
+  --bg: #f2f1ee;
+  --bg-raised: #faf9f7;
+  --bg-sunken: #e9e8e4;
+  --bg-translucent: rgba(242, 241, 238, 0.88);
+
+  --ink: #101014;
+  --ink-strong: #000000;
+  --muted: #6b6f7b;
+  --faint: #9ea2ae;
+
+  --line: rgba(16, 16, 20, 0.12);
+  --line-strong: rgba(16, 16, 20, 0.28);
+
+  /* High contrast inverted blocks (ArtCraft CTA buttons & active badges) */
+  --invert-bg: #101014;
+  --invert-fg: #f2f1ee;
+
+  /* Accent Colors */
+  --accent: #2d81ff;
+  --accent-ink: #1659c4;
+  --accent-blue: #2d81ff;
+  --accent-blue-hover: #1659c4;
+  --accent-blue-subtle: rgba(45, 129, 255, 0.10);
+
+  --accent-cyan: #0284c7;
+  --accent-teal: #0d9488;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+  --accent-orange: #ea580c;
+  --accent-red: #dc2626;
+  --accent-red-subtle: rgba(220, 38, 38, 0.10);
+  --accent-purple: #7c3aed;
+
+  /* Aliases mapped to SismoCol structural system */
+  --bg-space: var(--bg);
+  --bg-primary: var(--bg-raised);
+  --bg-card: var(--bg-raised);
+  --bg-card-hover: var(--bg-sunken);
+  --bg-elevated: var(--bg-raised);
+
+  --border-subtle: var(--line);
+  --border-active: var(--line-strong);
+  --border-focus: var(--accent);
+
+  --text-main: var(--ink);
+  --text-muted: var(--muted);
+  --text-dim: var(--faint);
+
+  /* ========================================================================
+     Typography (ArtCraft Core Stack)
+     ======================================================================== */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: 'Archivo', var(--font-sans);
+  --font-display: 'Archivo', var(--font-sans);
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* ========================================================================
+     Radii: Technical Precision & Sharp Geometry (ArtCraft Blueprint)
+     ======================================================================== */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+
+  /* ========================================================================
+     Shadows & Elevations: Flat Architectural Grids with Hairline Borders
+     ======================================================================== */
+  --shadow-sm: none;
+  --shadow-md: 0 4px 16px rgba(16, 16, 20, 0.04);
+  --shadow-lg: 0 8px 30px rgba(16, 16, 20, 0.08);
+
+  /* Transitions */
+  --transition-fast: 0.12s ease;
+  --transition-smooth: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ========================================================================
+   ArtCraft Exact Dark Mode (Charcoal Obsidian Terminal Palette)
+   ======================================================================== */
+[data-theme="dark"] {
+  --bg: #0d0e10;
+  --bg-raised: #15161a;
+  --bg-sunken: #1b1c22;
+  --bg-translucent: rgba(13, 14, 16, 0.88);
+
+  /* ArtCraft Exact Typography Tokens */
+  --ink: #e1e3e8;              /* Soft ice-platinum for body and readable text */
+  --ink-strong: #ffffff;       /* Pure white for headings, big values, active emphasis */
+  --muted: #8a8f9d;            /* Slate-gray for descriptions, HUD labels, secondary info */
+  --faint: #525866;            /* Subtle dark gray for minor prefixes, dividers, footnotes */
+
+  --line: rgba(255, 255, 255, 0.08);       /* Hairline border */
+  --line-strong: rgba(255, 255, 255, 0.16); /* Border focus */
+
+  /* Inverted in dark mode: pure white background, obsidian ink */
+  --invert-bg: #ffffff;
+  --invert-fg: #0d0e10;
+
+  --accent: #3b82f6;
+  --accent-ink: #60a5fa;
+  --accent-blue: #3b82f6;
+  --accent-blue-hover: #60a5fa;
+  --accent-blue-subtle: rgba(59, 130, 246, 0.12);
+
+  --accent-cyan: #38bdf8;
+  --accent-teal: #14b8a6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-orange: #fb923c;
+  --accent-red: #ef4444;
+  --accent-red-subtle: rgba(239, 68, 68, 0.15);
+  --accent-purple: #a855f7;
+
+  --bg-space: var(--bg);
+  --bg-primary: var(--bg-raised);
+  --bg-card: var(--bg-raised);
+  --bg-card-hover: var(--bg-sunken);
+  --bg-elevated: var(--bg-raised);
+
+  --border-subtle: var(--line);
+  --border-active: var(--line-strong);
+  --border-focus: var(--accent);
+
+  --text-main: var(--ink);
+  --text-muted: var(--muted);
+  --text-dim: var(--faint);
+
+  --shadow-sm: none;
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.60);
+}
